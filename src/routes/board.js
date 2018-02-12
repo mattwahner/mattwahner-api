@@ -3,16 +3,19 @@ import auth from "../middlewares/auth";
 import Message from '../models/Message';
 
 const router = express.Router();
-router.use(auth);
 
 let message = 'In room';
 
 router.route('/')
     .get((req, res) => {
         res.json({ message });
-    })
+    });
+
+router.use(auth);
+
+router.route('/')
     .post((req, res) => {
-        message = req.body.loc;
+        message = req.body.text;
         res.json({message: 'Location saved'});
     });
 
