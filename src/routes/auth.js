@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 const router = express.Router();
 
 router.post('/', (req, res) => {
-    console.log(req.body.password);
     if (bcrypt.compareSync(req.body.password, process.env.PASSWORD))
         res.json({ token: jwt.sign({}, process.env.JWT_SECRET) });
     else
