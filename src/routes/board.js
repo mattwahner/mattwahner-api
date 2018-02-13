@@ -19,6 +19,15 @@ router.route('/')
         res.json({message: 'Location saved'});
     });
 
+const validate = (text) => {
+    if (text.length > 16)
+        return 'Message must be under 16 characters!';
+    if (text.trim().length === 0)
+        return 'Message must not be empty!';
+    if (!/^[A-Za-z <>]*$/.test(text))
+        return ('Message must contain only normal characters!');
+};
+
 router.route('/messages')
     .get((req, res) => {
         Message.find((error, messages) => {
@@ -29,15 +38,20 @@ router.route('/messages')
         })
     })
     .post((req, res) => {
-        let message = new Message();
-        message.text = req.body.text;
+        const error = validate(req.body.text);
+        if (error)
+            res.status(400).json({ error });
+        else {
+            let message = new Message();
+            message.text = req.body.text;
 
-        message.save((error) => {
-            if (error)
-                res.send(error);
+            message.save((error) => {
+                if (error)
+                    res.send(error);
 
-            res.json(message);
-        });
+                res.json(message);
+            });
+        }
     });
 
 router.route('/messages/:message_id')
@@ -50,19 +64,24 @@ router.route('/messages/:message_id')
         })
     })
     .put((req, res) => {
-        Message.findById(req.params.message_id, (error, message) => {
-            if (error)
-                res.send(error);
-
-            message.text = req.body.text;
-
-            message.save((error) => {
+        const error = validate(req.body.text);
+        if (error)
+            res.status(400).json({ error });
+        else {
+            Message.findById(req.params.message_id, (error, message) => {
                 if (error)
                     res.send(error);
 
-                res.json(message);
+                message.text = req.body.text;
+
+                message.save((error) => {
+                    if (error)
+                        res.send(error);
+
+                    res.json(message);
+                })
             })
-        })
+        }
     })
     .delete((req, res) => {
         Message.remove({
