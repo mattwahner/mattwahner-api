@@ -16,8 +16,9 @@ mongoose.connect('mongodb://localhost/board');
 app.use('/api/auth', auth);
 app.use('/api/board', board);
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-app.listen(8081, () => console.log('Running on localhost:8081'));
+app.listen(8080, () => console.log('Running on localhost:8080'));
