@@ -20,12 +20,21 @@ router.route('/')
     });
 
 const validate = (text) => {
-    if (text.length > 16)
-        return 'Message must be under 16 characters!';
+    //if (text.length > 16)
+    //    return 'Message must be under 16 characters!';
     if (text.trim().length === 0)
         return 'Message must not be empty!';
-    if (!/^[A-Za-z <>]*$/.test(text))
+    if (!/^[A-Za-z0-9 <>]*$/.test(text))
         return ('Message must contain only normal characters!');
+    var words = text.split(' ');
+    var line1 = '';
+    var line2 = '';
+    while (words.length > 0 && line1.concat(' ' + words[0]).trim().length <= 16) {
+        line1 = line1.concat(' ' + words.shift()).trim();
+    }
+    line2 = words.join(' ');
+    if (line1.length > 16 || line2.length > 16)
+        return 'Message does not wrap correctly';
 };
 
 router.route('/messages')
